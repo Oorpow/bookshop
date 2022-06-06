@@ -21,6 +21,16 @@ export const getBookById = (id: number) =>
         url: `/book/select/${id}`
     })
 
+// 根据书名查询书籍
+export const getBookByBookName = (bookName: string) =>
+    request({
+        url: '/book/select',
+        method: 'post',
+        data: {
+            bookName
+        }
+    })
+
 // 更新书籍信息
 export const updateBookById = (bookForm: NewBookFormType) =>
     request({
@@ -43,11 +53,20 @@ export const getBookByPage = (current: number, limit: number, condition?: BookFi
         method: 'post',
         data: condition
     })
+
 // 根据书名查询书籍
-export const getBookByKeywords = (bookName: string) => request({
-    url: '/book/select',
-    method: 'post',
-    data: {
-        bookName
-    }
-})
+export const getBookByKeywords = (bookName: string) =>
+    request({
+        url: '/book/select',
+        method: 'post',
+        data: {
+            bookName
+        }
+    })
+
+// 导出排行榜
+export const outputRankSales = () =>
+    request({
+        url: '/book/download',
+        responseType: 'blob'
+    })

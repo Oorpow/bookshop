@@ -2,12 +2,7 @@
     <n-config-provider :theme-overrides="themeOverrides">
         <div class="content">
             <n-form
-                ref="loginFormRef"
-                :label-width="600"
-                :model="loginForm"
-                :rules="rules"
-                class="loginForm"
-                size="large"
+                ref="loginFormRef" :label-width="600" :model="loginForm" :rules="rules" class="loginForm" size="large"
             >
                 <n-form-item label="用户名" path="uname">
                     <n-input v-model:value="loginForm.uname" placeholder="username" clearable />

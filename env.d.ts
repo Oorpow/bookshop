@@ -10,3 +10,4 @@ interface ImportMeta {
     readonly env: ImportMetaEnv
 }
 declare module 'string-to-object-convert'
+declare module 'nprogress'

@@ -30,7 +30,7 @@ import BookItem from '@/components/content/BookItem/index.vue'
 import _ from 'lodash'
 import type { GlobalThemeOverrides } from 'naive-ui'
 import type { IBookItem } from '@/types'
-import { bookGetList } from '@/api/book'
+import { bookGetList, getBookByBookName } from '@/api/book'
 
 const themeOverrides: GlobalThemeOverrides = {
     Input: {
@@ -55,9 +55,13 @@ getBooksList()
 
 // 搜索
 const handleSearchProduct = _.debounce(async () => {
-    // if (productKeywords.value === '') {
-    //     getBooksList()
-    // }
+    if (productKeywords.value === '') {
+        getBooksList()
+    } else {
+        const res = await getBookByBookName(productKeywords.value)
+        booksList.length = 0
+        booksList.push(...res.data)
+    }
 }, 500)
 </script>
 

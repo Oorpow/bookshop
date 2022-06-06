@@ -1,5 +1,6 @@
 import {
     createRouter,
+    createWebHashHistory,
     createWebHistory,
     type NavigationGuardNext,
     type RouteLocationNormalized
@@ -8,12 +9,17 @@ import Layout from '@/components/common/Layout.vue'
 import { useAdminLoginStore } from '@/stores/admin'
 
 const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
+    history: createWebHashHistory(import.meta.env.BASE_URL),
+    // history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
             path: '/',
             name: 'login',
-            component: () => import('@/views/Login.vue')
+            component: () => import('@/views/Login.vue'),
+        },
+        {
+            path: '/index',
+            redirect: { name: 'home' }
         },
         {
             path: '/register',

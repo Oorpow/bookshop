@@ -22,7 +22,7 @@
         :pagination="pagination"
         style="margin-top: 20px"
     />
-    <!-- 编辑 -->
+    <!-- 添加 -->
     <n-modal
         v-model:show="showAddModal"
         :mask-closable="false"
@@ -118,7 +118,6 @@ const getAdminList = async () => {
     if (checkCode((res as any).code) === 200) {
         adminList.length = 0
         adminList.push(...res.data)
-        // console.log(adminList)
     }
 }
 getAdminList()

@@ -24,13 +24,13 @@ export default defineConfig({
             '@': path.resolve(__dirname, 'src')
         }
     },
-    server: {
-        proxy: {
-            '/api': {
-                target: 'http://192.168.199.138',
-                changeOrigin: true,
-                rewrite: (path) => path.replace(/^\/api/, '')
-            }
-        }
-    }
+    // server: {
+    //     proxy: {
+    //         '/api': {
+    //             target: 'http://192.168.199.227',
+    //             changeOrigin: true,
+    //             rewrite: (path) => path.replace(/^\/api/, '')
+    //         }
+    //     }
+    // }
 })

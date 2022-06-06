@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { NAvatar, type DataTableColumn } from 'naive-ui'
+import { NAvatar, type DataTableColumns } from 'naive-ui'
 import { NButton, useMessage, useDialog } from 'naive-ui'
 import { AppsAddIn24Filled } from '@vicons/fluent'
 import { IosSearch } from '@vicons/ionicons4'
@@ -51,7 +51,7 @@ const createColumns = ({
         {
             title: '用户头像',
             key: 'portrait',
-            render(row) {
+            render(row: IUserInfo) {
                 return h(NAvatar, {
                     src: row.portrait,
                     round: true,
@@ -62,7 +62,7 @@ const createColumns = ({
         {
             title: '操作',
             key: 'id',
-            render(row) {
+            render(row: IUserInfo) {
                 return h(
                     NButton,
                     {

@@ -19,7 +19,7 @@
                     <n-input v-model:value="registerForm.nickname" />
                 </n-form-item>
                 <n-form-item path="portrait" label="头像">
-                    <n-upload action="http://192.168.199.138/upload" @finish="uploadFinish">
+                    <n-upload action="http://192.168.199.227/upload" @finish="uploadFinish">
                         <n-button>上传文件</n-button>
                     </n-upload>
                 </n-form-item>

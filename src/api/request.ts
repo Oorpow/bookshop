@@ -5,7 +5,7 @@ import 'nprogress/nprogress.css'
 // const store = useLoginStore()
 
 const request = axios.create({
-    baseURL: '/api',
+    baseURL: 'http://192.168.199.227',
     withCredentials: true
 })
 

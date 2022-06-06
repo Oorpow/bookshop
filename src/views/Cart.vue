@@ -119,7 +119,7 @@
                 <!-- 无商品的情况下 -->
                 <template v-else>
                     <div class="emptyBlock">
-                        <el-empty description="购物车是空的，请先添加商品" />
+                        <n-empty size="large" description="购物车是空的，请添加商品"> </n-empty>
                     </div>
                 </template>
             </div>

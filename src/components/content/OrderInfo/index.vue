@@ -91,7 +91,7 @@ const orderSerial = ref('')
 const payModalVisible = ref(false)
 const total = ref(0)
 // 打开支付模态框
-const openPayModal = (id: string, list: ICartItem[]) => {
+const openPayModal = (id: string, list: any[]) => {
     orderSerial.value = id
     payModalVisible.value = true
     total.value = Number(

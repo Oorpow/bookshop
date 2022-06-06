@@ -4,7 +4,18 @@
             <n-icon><AppsAddIn24Filled /></n-icon>
         </template>
     </n-button>
-    <n-input placeholder="搜索" autosize style="min-width: 50%" v-model:value="searchKeywords" @change="searchBook">
+    <n-button @click="downloadRankExcel">
+        <template #icon>
+            <n-icon><ArrowDownload16Filled /></n-icon>
+        </template>
+    </n-button>
+    <n-input
+        placeholder="搜索"
+        autosize
+        style="min-width: 50%"
+        v-model:value="searchKeywords"
+        @change="searchBook"
+    >
         <template #prefix>
             <n-icon :component="IosSearch" />
         </template>
@@ -37,7 +48,7 @@
                 <n-input v-model:value="bookForm.bookStock" />
             </n-form-item>
             <n-form-item label="商品实物图">
-                <n-upload action="http://192.168.199.138/upload" @finish="uploadFinish">
+                <n-upload action="http://192.168.199.227/upload" @finish="uploadFinish">
                     <n-button>更换图片</n-button>
                 </n-upload>
             </n-form-item>
@@ -75,7 +86,7 @@
                 <n-input v-model:value="addBookForm.bookStock" />
             </n-form-item>
             <n-form-item label="商品实物图">
-                <n-upload action="http://192.168.199.138/upload" @finish="uploadFinish">
+                <n-upload action="http://192.168.199.227/upload" @finish="uploadFinish">
                     <n-button>更换图片</n-button>
                 </n-upload>
             </n-form-item>
@@ -96,9 +107,17 @@
 <script setup lang="ts">
 import type { DataTableColumns, FormRules, UploadFileInfo } from 'naive-ui'
 import { NButton, useMessage, NImage, useDialog } from 'naive-ui'
-import { AppsAddIn24Filled } from '@vicons/fluent'
+import { AppsAddIn24Filled, ArrowDownload16Filled } from '@vicons/fluent'
 import { IosSearch } from '@vicons/ionicons4'
-import { bookAdd, bookGetList, deleteBookById, getBookById, getBookByKeywords, updateBookById } from '@/api/book'
+import {
+    bookAdd,
+    bookGetList,
+    deleteBookById,
+    getBookById,
+    getBookByKeywords,
+    outputRankSales,
+    updateBookById
+} from '@/api/book'
 import type { IAddBook, IBookItem, NewBookFormType } from '@/types'
 import { checkCode } from '@/utils'
 
@@ -119,6 +138,36 @@ const getBookList = async () => {
     }
 }
 getBookList()
+
+// 下载
+const downloadRankExcel = () => {
+    outputRankSales().then((res: any) => {
+        let blob = new Blob([res], {
+            type: 'application/vnd.ms-excel'
+        })
+        let filename = 'rank.xlsx'
+        // 将blob对象转为一个URL
+        var blobURL = window.URL.createObjectURL(blob)
+        // 创建一个a标签
+        var tempLink = document.createElement('a')
+        // 隐藏a标签
+        tempLink.style.display = 'none'
+        // 设置a标签的href属性为blob对象转化的URL
+        tempLink.href = blobURL
+        // 给a标签添加下载属性
+        tempLink.setAttribute('download', filename)
+        if (typeof tempLink.download === 'undefined') {
+            tempLink.setAttribute('target', '_blank')
+        }
+        // 将a标签添加到body当中
+        document.body.appendChild(tempLink)
+        // 启动下载
+        tempLink.click()
+        // 下载完毕删除a标签
+        document.body.removeChild(tempLink)
+        window.URL.revokeObjectURL(blobURL)
+    })
+}
 
 // 搜索的关键字
 const searchKeywords = ref('')
