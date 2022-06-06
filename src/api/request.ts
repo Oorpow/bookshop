@@ -5,7 +5,8 @@ import 'nprogress/nprogress.css'
 // const store = useLoginStore()
 
 const request = axios.create({
-    baseURL: 'http://192.168.199.227',
+    // 地址
+    baseURL: '',
     withCredentials: true
 })
 

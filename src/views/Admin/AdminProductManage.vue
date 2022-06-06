@@ -48,9 +48,9 @@
                 <n-input v-model:value="bookForm.bookStock" />
             </n-form-item>
             <n-form-item label="商品实物图">
-                <n-upload action="http://192.168.199.227/upload" @finish="uploadFinish">
+                <!-- <n-upload action="http://xx/upload" @finish="uploadFinish">
                     <n-button>更换图片</n-button>
-                </n-upload>
+                </n-upload> -->
             </n-form-item>
             <n-form-item label="商品描述">
                 <n-input
@@ -86,9 +86,9 @@
                 <n-input v-model:value="addBookForm.bookStock" />
             </n-form-item>
             <n-form-item label="商品实物图">
-                <n-upload action="http://192.168.199.227/upload" @finish="uploadFinish">
+                <!-- <n-upload action="http://xx/upload" @finish="uploadFinish">
                     <n-button>更换图片</n-button>
-                </n-upload>
+                </n-upload> -->
             </n-form-item>
             <n-form-item label="商品描述">
                 <n-input
