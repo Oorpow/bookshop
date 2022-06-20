@@ -12,7 +12,13 @@
             <!-- 已登录 -->
             <div class="userInfo" v-if="store.getUserInfo.uname !== ''">
                 <n-dropdown :options="normalOptions" :show-arrow="true" @select="handleSelect">
-                    <n-avatar round size="large" :src="getAvatar()" @click="toUserCenter" />
+                    <n-avatar
+                        round
+                        size="large"
+                        :src="getAvatar()"
+                        @click="toUserCenter"
+                        style="cursor: pointer"
+                    />
                 </n-dropdown>
             </div>
             <!-- 未登录 -->

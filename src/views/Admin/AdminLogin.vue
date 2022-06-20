@@ -1,6 +1,6 @@
 <template>
     <div class="content">
-        <n-card class="loginCard">
+        <n-card class="loginCard" hoverable>
             <n-tabs default-value="signin" size="large" justify-content="space-evenly">
                 <n-tab-pane name="signin" tab="后台登录">
                     <n-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules">

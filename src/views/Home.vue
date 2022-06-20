@@ -6,19 +6,9 @@
                 <n-carousel show-arrow autoplay style="width: 50%">
                     <img
                         class="carousel-img"
-                        src="https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel1.jpeg"
-                    />
-                    <img
-                        class="carousel-img"
-                        src="https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel2.jpeg"
-                    />
-                    <img
-                        class="carousel-img"
-                        src="https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel3.jpeg"
-                    />
-                    <img
-                        class="carousel-img"
-                        src="https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel4.jpeg"
+                        :src="carousel.image"
+                        v-for="(carousel, index) in carouselList"
+                        :key="index"
                     />
                     <template #arrow="{ prev, next }">
                         <div class="custom-arrow">
@@ -47,12 +37,22 @@
                 </n-carousel>
                 <n-tabs type="line" size="large" class="userTabs">
                     <n-tab-pane name="oasis" tab="公告">
+                        <!-- <n-skeleton v-if="loading" text :repeat="18" style="width: 90%" /> -->
                         <AnnouncementItem />
                     </n-tab-pane>
                     <n-tab-pane name="the beatles" tab="社区">
-                        <n-skeleton text :repeat="15" style="width: 60%" />
+                        <n-skeleton text :repeat="18" style="width: 100%" />
                     </n-tab-pane>
                 </n-tabs>
+            </div>
+
+            <div class="bookListContainer">
+                <div class="title">
+                    <h3>热销书籍</h3>
+                </div>
+                <div class="booksListContent">
+                    <book-item :booksList="hotList"></book-item>
+                </div>
             </div>
 
             <!-- 商品列表 -->
@@ -75,7 +75,10 @@ import { NConfigProvider } from 'naive-ui'
 import type { GlobalThemeOverrides } from 'naive-ui'
 import { ArrowBack, ArrowForward } from '@vicons/ionicons5'
 import { bookGetList } from '@/api/book'
-import type { IBookItem } from '@/types'
+import type { IBookItem, CarouselList } from '@/types'
+import { getCarouselList } from '@/api/carousel'
+import { getCollectionId } from '@/api/collect'
+import { checkCode } from '@/utils'
 
 const themeOverrides: GlobalThemeOverrides = {
     Tabs: {
@@ -86,14 +89,44 @@ const themeOverrides: GlobalThemeOverrides = {
     }
 }
 
+const carouselList = ref<CarouselList[]>([])
+
+// const loading = ref(true)
+
+// 热销榜单
+const hotList = reactive<IBookItem[]>([])
 // 书籍列表
 const booksList = reactive<IBookItem[]>([])
+// 收藏列表
+const collectionList = ref<number[]>([])
 
 // 获取全部书籍
 const getAllProduct = async () => {
     const res = await bookGetList()
+    const carousel = await getCarouselList()
+    const idCollection = await getCollectionId()
+
     booksList.length = 0
     booksList.push(...res.data)
+    carouselList.value.length = 0
+    carouselList.value.push(...carousel.data)
+    collectionList.value.length = 0
+    collectionList.value.push(...idCollection.data)
+
+    // 添加控制收藏的字段
+    booksList.forEach((book: IBookItem) => {
+        if (collectionList.value.includes(book.id)) {
+            ;(book as any)['isCollect'] = true
+        } else {
+            ;(book as any)['isCollect'] = false
+        }
+    })
+    const afterSort = booksList.sort((a: IBookItem, b: IBookItem) => {
+        return b.bookSales - a.bookSales
+    }).slice(0, 3)
+    hotList.length = 0
+    hotList.push(...afterSort)
+    // loading.value = false
 }
 getAllProduct()
 </script>
@@ -107,9 +140,9 @@ getAllProduct()
         width: 90%;
         height: 450px;
         display: flex;
-        align-items: self-end;
         margin: auto;
         justify-content: space-between;
+        align-items: center;
 
         .homeLeftContent {
             width: 50%;
@@ -180,7 +213,7 @@ getAllProduct()
             flex-wrap: wrap;
             &::after {
                 content: '';
-                width: 48%;
+                width: 49%;
             }
 
             .bookItem {
@@ -222,7 +255,7 @@ getAllProduct()
 
 .carousel-img {
     width: 100%;
-    height: 600px;
+    height: 450px;
     object-fit: cover;
 }
 

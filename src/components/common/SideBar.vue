@@ -44,7 +44,8 @@ const permissionObj: any = {
     BackstageProduct: '商品管理',
     BackstageAnnouncement: '公告管理',
     BackstageUserFront: '用户列表',
-    BackstageUserBackstage: '管理员列表'
+    BackstageUserBackstage: '管理员列表',
+    BackstageCarousel: '轮播图管理'
 }
 // 将权限列表转为中文
 const parsePermissionToCn = (permission: string) => permissionObj[permission]

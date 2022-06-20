@@ -63,3 +63,4 @@ export const deleteUserById = (id: number) =>
         url: `/user/delete/${id}`,
         method: 'delete'
     })
+

@@ -3,7 +3,7 @@
         <div class="shoppingCart">
             <h1 class="cartTitle">购物车</h1>
 
-            <div class="cartContent">
+            <div class="cartContent" :style="{ height: cartList.length > 0 ? 'auto' : 600 + 'px' }">
                 <template v-if="cartList.length > 0">
                     <!-- 收货信息 -->
                     <div class="cargoInfo">
@@ -134,6 +134,7 @@
                         :title="product.bookName"
                         v-for="product in otherProducts"
                         :key="product.id"
+                        hoverable
                     >
                         <template #cover>
                             <img :src="product.bookImg" />
@@ -314,7 +315,10 @@ const handlePlaceAnOrder = async () => {
 // 支付模态框可见性
 const payModalVisible = ref(false)
 // 取消支付
-const cancelPay = () => {}
+const cancelPay = () => {
+    message.success('已取消支付')
+    getCartList()
+}
 // 确认支付
 const confirmPay = async () => {
     const res = await payOrderByOrderId(orderSerial.value)
@@ -362,9 +366,8 @@ const confirmPay = async () => {
             }
 
             .cartList {
-                width: 50%;
-                // margin-top: 20px;
-                border: 1px solid #ccc;
+                width: 45%;
+                border: 1px solid rgb(239, 239, 239);
                 border-radius: 5px;
                 padding: 0 15px;
 
@@ -378,18 +381,13 @@ const confirmPay = async () => {
                     }
 
                     .productItemImg {
-                        width: 200px;
-                        height: 200px;
-                        // background: rgb(247, 247, 247);
+                        width: 180px;
+                        height: 180px;
                         cursor: pointer;
 
                         img {
                             width: 100%;
                             height: 100%;
-                            // position: relative;
-                            // top: 50%;
-                            // left: 50%;
-                            // transform: translate(-50%, -50%);
                         }
                     }
 
@@ -399,7 +397,6 @@ const confirmPay = async () => {
                         justify-content: space-around;
 
                         .productItemInfo {
-                            // width: 50%;
                             display: flex;
                             flex-direction: column;
                             justify-content: space-between;
@@ -409,7 +406,7 @@ const confirmPay = async () => {
                                 flex-direction: column;
 
                                 .productName {
-                                    width: 70px;
+                                    width: 120px;
                                     white-space: nowrap;
                                     overflow: hidden;
                                     text-overflow: ellipsis;
@@ -525,12 +522,20 @@ const confirmPay = async () => {
                 justify-content: space-between;
                 flex-wrap: wrap;
                 margin-top: 10px;
+                .n-card {
+                    max-width: 300px;
+                    :deep(.n-card-cover) {
+                        display: flex;
+                        justify-content: center;
+                        padding: 25px 0;
+                    }
+                }
+                img {
+                    width: 150px;
+                    height: 150px;
+                }
             }
         }
     }
-}
-.n-card {
-    max-width: 300px;
-    margin-top: 20px;
 }
 </style>

@@ -2,21 +2,14 @@ import axios, { type AxiosRequestConfig } from 'axios'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 
-// const store = useLoginStore()
-
 const request = axios.create({
-    // 地址
-    baseURL: '',
+    baseURL: '/api',
     withCredentials: true
 })
 
 request.interceptors.request.use(
     (config: AxiosRequestConfig) => {
         NProgress.start()
-        // const token = store.getToken
-        // if (token) {
-        //     (config.headers as AxiosRequestHeaders).Authorization = token
-        // }
         return config
     },
     (err) => {

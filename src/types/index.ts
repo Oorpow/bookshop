@@ -164,3 +164,24 @@ export type BookType = {
     bookStock: number
     id: number
 }
+
+export type CarouselList = {
+    id: number
+    title: string | null
+    description: string | null
+    image: string
+}
+
+export type CarouselForm = {
+    id?: number
+    title?: string | null
+    image: string
+    description?: string | null
+}
+
+export type MailForm = {
+    id?: number
+    title?: string
+    subject: string
+    content: string
+}

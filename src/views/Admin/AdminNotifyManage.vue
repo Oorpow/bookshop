@@ -194,7 +194,7 @@ const createColumns = (): DataTableColumns<Announcement> => {
     return [
         {
             title: '序号',
-            key: 'index'
+            key: 'id'
         },
         {
             title: '公告标题',

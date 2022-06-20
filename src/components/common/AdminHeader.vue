@@ -1,9 +1,14 @@
 <template>
     <n-layout-header bordered>
         <div class="adminInfo">
-            <div class="search">
-                <n-icon :component="Search" size="20" :depth="1" />
-            </div>
+            <n-switch v-model:value="isDark" :rail-style="railStyle" @update:value="changeTheme">
+                <template #checked-icon>
+                    <n-icon :component="WeatherMoon16Filled" />
+                </template>
+                <template #unchecked-icon>
+                    <n-icon :component="WeatherSunny28Regular" />
+                </template>
+            </n-switch>
             <n-dropdown :options="options" @select="handleSelect">
                 <n-avatar round :size="40"> {{ store.getAdminInfo.name.split('')[0] }}</n-avatar>
             </n-dropdown>
@@ -12,19 +17,21 @@
 </template>
 
 <script setup lang="ts">
-import { type Component, h } from 'vue'
+import { type Component, type CSSProperties, h } from 'vue'
 import { useRouter } from 'vue-router'
 import { NIcon } from 'naive-ui'
-import { Search } from '@vicons/ionicons5'
 import {
     PersonCircleOutline as UserIcon,
     Pencil as EditIcon,
     LogOutOutline as LogoutIcon
 } from '@vicons/ionicons5'
+import { WeatherSunny28Regular, WeatherMoon16Filled } from '@vicons/fluent'
 import { useAdminLoginStore } from '@/stores/admin'
+import { useThemeStore } from '@/stores/theme'
 
 const router = useRouter()
 const store = useAdminLoginStore()
+const themeStore = useThemeStore()
 
 const renderIcon = (icon: Component) => {
     return () => {
@@ -39,6 +46,24 @@ const handleSelect = async (key: number) => {
         store.clearAdminInfo()
         router.push({ name: 'adminLogin' })
     }
+}
+
+// 黑夜模式
+type Rail = {
+    checked: boolean
+}
+
+const railStyle = ({ checked }: Rail) => {
+    const style: CSSProperties = {}
+    if (checked) {
+        style.background = '#2f2f2f'
+    }
+    return style
+}
+
+let isDark = ref(false)
+const changeTheme = () => {
+    themeStore.changeTheme()
 }
 </script>
 

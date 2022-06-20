@@ -48,9 +48,9 @@
                 <n-input v-model:value="bookForm.bookStock" />
             </n-form-item>
             <n-form-item label="商品实物图">
-                <!-- <n-upload action="http://xx/upload" @finish="uploadFinish">
+                <n-upload action="" @finish="editUploadFinish">
                     <n-button>更换图片</n-button>
-                </n-upload> -->
+                </n-upload>
             </n-form-item>
             <n-form-item label="商品描述">
                 <n-input
@@ -86,9 +86,9 @@
                 <n-input v-model:value="addBookForm.bookStock" />
             </n-form-item>
             <n-form-item label="商品实物图">
-                <!-- <n-upload action="http://xx/upload" @finish="uploadFinish">
+                <n-upload action="" @finish="uploadFinish">
                     <n-button>更换图片</n-button>
-                </n-upload> -->
+                </n-upload>
             </n-form-item>
             <n-form-item label="商品描述">
                 <n-input
@@ -222,6 +222,12 @@ const uploadFinish = ({ file, event }: { file: UploadFileInfo; event?: ProgressE
         addBookForm.value.bookImg = res.data
     }
 }
+const editUploadFinish =  ({ file, event }: { file: UploadFileInfo; event?: ProgressEvent }) => {
+    const res = JSON.parse((event?.target as XMLHttpRequest).response)
+    if (res.code === 100) {
+        bookForm.value.bookImg = res.data
+    }
+}
 
 // 打开删除提示框
 const openDeleteDialog = (rowData: IBookItem) => {
@@ -260,7 +266,7 @@ const createColumns = (): DataTableColumns<IBookItem> => {
     return [
         {
             title: '序号',
-            key: 'index'
+            key: 'id'
         },
         {
             title: '商品名称',
@@ -284,11 +290,7 @@ const createColumns = (): DataTableColumns<IBookItem> => {
             key: 'bookImg',
             render(row) {
                 return h(NImage, {
-                    src: row.bookImg,
-                    style: {
-                        width: '80px',
-                        height: '80px'
-                    }
+                    src: row.bookImg
                 })
             }
         },
@@ -358,4 +360,16 @@ const handleAdd = async () => {
 }
 </script>
 
-<style scoped></style>
+<style scoped lang="less">
+.n-data-table {
+    :deep(.n-data-table-td) {
+        vertical-align: middle;
+        .n-image {
+            img {
+                width: 80px;
+                height: 90px;
+            }
+        }
+    }
+}
+</style>

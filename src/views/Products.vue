@@ -31,6 +31,7 @@ import _ from 'lodash'
 import type { GlobalThemeOverrides } from 'naive-ui'
 import type { IBookItem } from '@/types'
 import { bookGetList, getBookByBookName } from '@/api/book'
+import { getCollectionId } from '@/api/collect'
 
 const themeOverrides: GlobalThemeOverrides = {
     Input: {
@@ -41,6 +42,8 @@ const themeOverrides: GlobalThemeOverrides = {
 
 // 书籍列表
 const booksList = reactive<IBookItem[]>([])
+// 收藏列表
+const collectionList = ref<number[]>([])
 
 // 输入框的值
 let productKeywords = ref('')
@@ -48,8 +51,22 @@ let productKeywords = ref('')
 // 获取商品列表
 const getBooksList = async () => {
     const res = await bookGetList()
+    // 获取已收藏过的商品ID
+    const idCollection = await getCollectionId()
+
     booksList.length = 0
     booksList.push(...res.data)
+    collectionList.value.length = 0
+    collectionList.value.push(...idCollection.data)
+
+    // 添加控制收藏的字段
+    booksList.forEach((book: IBookItem) => {
+        if (collectionList.value.includes(book.id)) {
+            (book as any)['isCollect'] = true
+        } else {
+            (book as any)['isCollect'] = false
+        }
+    })
 }
 getBooksList()
 
@@ -122,7 +139,7 @@ const handleSearchProduct = _.debounce(async () => {
             flex-wrap: wrap;
             &::after {
                 content: '';
-                width: 48%;
+                width: 49%;
             }
         }
     }

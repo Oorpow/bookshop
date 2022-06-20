@@ -34,7 +34,7 @@ export const useAdminLoginStore = defineStore({
             const code = checkCode((res as any).code)
             if (code === 200) {
                 this.adminInfo = res.data
-                this.backstageToken = Cookies.get('satoken') as string
+                this.backstageToken = Cookies.get('token') as string
                 return true
             } else {
                 return false
@@ -43,7 +43,7 @@ export const useAdminLoginStore = defineStore({
         clearAdminInfo() {
             localStorage.removeItem('user')
             localStorage.removeItem('admin')
-            Cookies.remove('satoken')
+            Cookies.remove('token')
         }
     }
 })

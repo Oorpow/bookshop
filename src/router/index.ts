@@ -93,6 +93,16 @@ const router = createRouter({
                     name: 'BackstageUserBackstage',
                     component: () => import('@/views/Admin/AdminUserBackstage.vue')
                 },
+                {
+                    path: 'BackstageCarousel',
+                    name: 'BackstageCarousel',
+                    component: () => import('@/views/Admin/AdminCarousel.vue')
+                },
+                {
+                    path: 'BackstageMail',
+                    name: 'BackstageMail',
+                    component: () => import('@/views/Admin/AdminMail.vue')
+                }
             ]
         },
         {
@@ -100,7 +110,10 @@ const router = createRouter({
             name: 'notFound',
             component: () => import('@/views/NotFound.vue')
         }
-    ]
+    ],
+    scrollBehavior (to, from, savedPosition) {
+        return { top: 0 }
+    }
 })
 
 // 检查用户权限

@@ -10,6 +10,9 @@
                     <n-tab-pane name="the beatles" tab="所有订单">
                         <OrderInfo />
                     </n-tab-pane>
+                    <n-tab-pane name="my collect" tab="我的收藏">
+                        <CollectionSFC />
+                    </n-tab-pane>
                 </n-tabs>
             </div>
         </div>
@@ -19,6 +22,7 @@
 <script setup lang="ts">
 import UserInfoCom from '@/components/content/UserInfo/index.vue'
 import OrderInfo from '@/components/content/OrderInfo/index.vue'
+import CollectionSFC from '@/components/content/Collection/index.vue'
 import { NConfigProvider } from 'naive-ui'
 import type { GlobalThemeOverrides } from 'naive-ui'
 

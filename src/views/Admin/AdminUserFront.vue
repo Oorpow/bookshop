@@ -38,7 +38,7 @@ const createColumns = ({
     return [
         {
             title: '序号',
-            key: 'index'
+            key: 'id'
         },
         {
             title: '用户名',
@@ -102,4 +102,10 @@ const columns = createColumns({
 })
 </script>
 
-<style scoped></style>
+<style scoped lang="less">
+.n-data-table {
+    :deep(.n-data-table-td) {
+        vertical-align: middle;
+    }
+}
+</style>

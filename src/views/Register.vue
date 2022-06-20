@@ -18,11 +18,12 @@
                 <n-form-item path="nickname" label="昵称">
                     <n-input v-model:value="registerForm.nickname" />
                 </n-form-item>
-                <!-- <n-form-item path="portrait" label="头像">
-                    <n-upload action="http://xx/upload" @finish="uploadFinish">
+                <n-form-item path="portrait" label="头像">
+                    <!-- 服务器地址 -->
+                    <n-upload action="" @finish="uploadFinish">
                         <n-button>上传文件</n-button>
                     </n-upload>
-                </n-form-item> -->
+                </n-form-item>
                 <n-form-item label="联系电话" path="phone">
                     <n-input v-model:value="registerForm.phone"></n-input>
                 </n-form-item>

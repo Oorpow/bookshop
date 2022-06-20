@@ -3,7 +3,6 @@ import vue from '@vitejs/plugin-vue'
 import path from 'path'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 
 // https://vitejs.dev/config/
@@ -12,11 +11,10 @@ export default defineConfig({
         vue(),
         AutoImport({
             imports: ['vue'],
-            dts: 'src/auto-import.d.ts',
-            resolvers: [ElementPlusResolver()]
+            dts: 'src/auto-import.d.ts'
         }),
         Components({
-            resolvers: [ElementPlusResolver(), NaiveUiResolver()]
+            resolvers: [NaiveUiResolver()]
         })
     ],
     resolve: {
@@ -24,13 +22,14 @@ export default defineConfig({
             '@': path.resolve(__dirname, 'src')
         }
     },
-    // server: {
-    //     proxy: {
-    //         '/api': {
-    //             target: '',
-    //             changeOrigin: true,
-    //             rewrite: (path) => path.replace(/^\/api/, '')
-    //         }
-    //     }
-    // }
+    server: {
+        proxy: {
+            '/api': {
+                // server ip
+                target: 'xx',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/api/, '')
+            }
+        }
+    }
 })

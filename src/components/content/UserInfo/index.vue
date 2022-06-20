@@ -14,7 +14,7 @@
                     <div class="userInfo-time">
                         <span class="uname">{{ userForm.uname }}</span>
                         <span class="creatTime">{{
-                            dayjs(userForm.createTime).format('DD/MM/YYYY')
+                            dayjs(userForm.updateTime).format('DD/MM/YYYY')
                         }}</span>
                     </div>
                 </div>
@@ -36,9 +36,9 @@
                     />
                 </n-form-item>
                 <n-form-item path="portrait" label="头像">
-                    <!-- <n-upload action="http://xx/upload" @finish="uploadFinish">
+                    <n-upload action="" @finish="uploadFinish">
                         <n-button :disabled="isEdit">上传新头像</n-button>
-                    </n-upload> -->
+                    </n-upload>
                 </n-form-item>
             </n-form>
 
@@ -87,11 +87,14 @@ const isEdit = ref(true)
 const uploadFinish = ({ file, event }: { file: UploadFileInfo; event?: ProgressEvent }) => {
     const res = JSON.parse((event?.target as XMLHttpRequest).response)
     if (res.code === 100) {
-        userForm.value.portrait = res.data
+        // http://localhost/image/2022-06-06_20-11-46-646.jpg
+        userForm.value.portrait = 'api/image/' + res.data
     }
 }
+
 // 更新用户信息
 const editUserInfo = async () => {
+    userForm.value.portrait = userForm.value.portrait?.split('image/')[1]
     const res = await updateUserInfo(userForm.value)
     const code = checkCode((res as any).code)
     if (code === 200) {

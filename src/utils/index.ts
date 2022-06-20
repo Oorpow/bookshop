@@ -6,3 +6,8 @@ export function checkCode(code: number): number {
         return 500
     }
 }
+
+export function formatUploadUrl(url: string): string {
+    const result = url.split('image/')
+    return result[result.length - 1]
+}

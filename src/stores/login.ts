@@ -50,7 +50,7 @@ export const useLoginStore = defineStore({
         clearUserInfo() {
             localStorage.removeItem('user')
             localStorage.removeItem('admin')
-            Cookies.remove('satoken')
+            Cookies.remove('token')
         }
     }
 })
