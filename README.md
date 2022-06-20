@@ -1,4 +1,4 @@
-# bookstore
+# bookshop
 
 ## Project Setup
 
