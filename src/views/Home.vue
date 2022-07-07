@@ -2,45 +2,25 @@
     <n-config-provider :theme-overrides="themeOverrides">
         <div class="homeContainer">
             <div class="homeTopContainer">
-                <!-- 轮播 -->
-                <n-carousel show-arrow autoplay style="width: 50%">
-                    <img
-                        class="carousel-img"
-                        :src="carousel.image"
-                        v-for="(carousel, index) in carouselList"
-                        :key="index"
-                    />
-                    <template #arrow="{ prev, next }">
-                        <div class="custom-arrow">
-                            <button type="button" class="curtom-arrow--left" @click="prev">
-                                <n-icon>
-                                    <ArrowBack />
-                                </n-icon>
-                            </button>
-                            <button type="button" class="curtom-arrow--right" @click="next">
-                                <n-icon>
-                                    <ArrowForward />
-                                </n-icon>
-                            </button>
-                        </div>
+                <Suspense>
+                    <Carousel :carouselList="carouselList"></Carousel>
+                    <template #fallback>
+                        <LoadingCom :need-num="6" />
                     </template>
-                    <template #dots="{ total, currentIndex, to }">
-                        <ul class="custom-dots">
-                            <li
-                                v-for="index of total"
-                                :key="index"
-                                :class="{ ['is-active']: currentIndex === index - 1 }"
-                                @click="to(index - 1)"
-                            />
-                        </ul>
-                    </template>
-                </n-carousel>
+                </Suspense>
+
                 <n-tabs type="line" size="large" class="userTabs">
-                    <n-tab-pane name="oasis" tab="公告">
-                        <!-- <n-skeleton v-if="loading" text :repeat="18" style="width: 90%" /> -->
-                        <AnnouncementItem />
+                    <n-tab-pane name="announcement" tab="公告">
+                        <KeepAlive>
+                            <Suspense>
+                                <AnnouncementItem :announcementList="announcementList" />
+                                <template #fallback>
+                                    <LoadingCom :need-num="6" />
+                                </template>
+                            </Suspense>
+                        </KeepAlive>
                     </n-tab-pane>
-                    <n-tab-pane name="the beatles" tab="社区">
+                    <n-tab-pane name="community" tab="社区">
                         <n-skeleton text :repeat="18" style="width: 100%" />
                     </n-tab-pane>
                 </n-tabs>
@@ -51,7 +31,12 @@
                     <h3>热销书籍</h3>
                 </div>
                 <div class="booksListContent">
-                    <book-item :booksList="hotList"></book-item>
+                    <Suspense>
+                        <BookItem :booksList="hotList" />
+                        <template #fallback>
+                            <LoadingCom :needNum="6" />
+                        </template>
+                    </Suspense>
                 </div>
             </div>
 
@@ -61,7 +46,12 @@
                     <h3>猜你喜欢</h3>
                 </div>
                 <div class="booksListContent">
-                    <book-item :booksList="booksList"></book-item>
+                    <Suspense>
+                        <BookItem :booksList="booksList" />
+                        <template #fallback>
+                            <LoadingCom :needNum="6" />
+                        </template>
+                    </Suspense>
                 </div>
             </div>
         </div>
@@ -69,15 +59,15 @@
 </template>
 
 <script setup lang="ts">
-import BookItem from '@/components/content/BookItem/index.vue'
-import AnnouncementItem from '@/components/content/AnnouncementItem/index.vue'
+import 'animate.css'
+import LoadingCom from '@/components/content/LoadingComp/index.vue'
 import { NConfigProvider } from 'naive-ui'
 import type { GlobalThemeOverrides } from 'naive-ui'
-import { ArrowBack, ArrowForward } from '@vicons/ionicons5'
 import { bookGetList } from '@/api/book'
-import type { IBookItem, CarouselList } from '@/types'
+import type { IBookItem, CarouselList, Announcement } from '@/types'
 import { getCarouselList } from '@/api/carousel'
 import { getCollectionId } from '@/api/collect'
+import { getAnnouncement } from '@/api/announcement'
 import { checkCode } from '@/utils'
 
 const themeOverrides: GlobalThemeOverrides = {
@@ -89,6 +79,13 @@ const themeOverrides: GlobalThemeOverrides = {
     }
 }
 
+const AnnouncementItem = defineAsyncComponent(
+    () => import('@/components/content/AnnouncementItem/index.vue')
+)
+
+const BookItem = defineAsyncComponent(() => import('@/components/content/BookItem/index.vue'))
+const Carousel = defineAsyncComponent(() => import('@/components/content/Carousel/index.vue'))
+
 const carouselList = ref<CarouselList[]>([])
 
 // const loading = ref(true)
@@ -99,36 +96,76 @@ const hotList = reactive<IBookItem[]>([])
 const booksList = reactive<IBookItem[]>([])
 // 收藏列表
 const collectionList = ref<number[]>([])
+// 公告列表
+const announcementList = reactive<Announcement[]>([])
+
+const getAllThings = () => {
+    const res = Promise.all([
+        bookGetList(),
+        getCarouselList(),
+        getCollectionId(),
+        getAnnouncement()
+    ])
+    res.then((data) => {
+        booksList.length = 0
+        booksList.push(...data[0].data)
+        carouselList.value.length = 0
+        carouselList.value.push(...data[1].data)
+        collectionList.value.length = 0
+        collectionList.value.push(...data[2].data)
+        announcementList.length = 0
+        announcementList.push(...data[3].data)
+
+        // 添加控制收藏的字段
+        booksList.forEach((book: IBookItem) => {
+            if (collectionList.value.includes(book.id)) {
+                ;(book as any)['isCollect'] = true
+            } else {
+                ;(book as any)['isCollect'] = false
+            }
+        })
+        const afterSort = booksList
+            .sort((a: IBookItem, b: IBookItem) => {
+                return b.bookSales - a.bookSales
+            })
+            .slice(0, 3)
+        hotList.length = 0
+        hotList.push(...afterSort)
+        // console.log(data)
+    })
+}
+getAllThings()
 
 // 获取全部书籍
-const getAllProduct = async () => {
-    const res = await bookGetList()
-    const carousel = await getCarouselList()
-    const idCollection = await getCollectionId()
+// const getAllProduct = async () => {
+//     const res = await bookGetList()
+//     const carousel = await getCarouselList()
+//     const idCollection = await getCollectionId()
 
-    booksList.length = 0
-    booksList.push(...res.data)
-    carouselList.value.length = 0
-    carouselList.value.push(...carousel.data)
-    collectionList.value.length = 0
-    collectionList.value.push(...idCollection.data)
+//     booksList.length = 0
+//     booksList.push(...res.data)
+//     carouselList.value.length = 0
+//     carouselList.value.push(...carousel.data)
+//     collectionList.value.length = 0
+//     collectionList.value.push(...idCollection.data)
 
-    // 添加控制收藏的字段
-    booksList.forEach((book: IBookItem) => {
-        if (collectionList.value.includes(book.id)) {
-            ;(book as any)['isCollect'] = true
-        } else {
-            ;(book as any)['isCollect'] = false
-        }
-    })
-    const afterSort = booksList.sort((a: IBookItem, b: IBookItem) => {
-        return b.bookSales - a.bookSales
-    }).slice(0, 3)
-    hotList.length = 0
-    hotList.push(...afterSort)
-    // loading.value = false
-}
-getAllProduct()
+//     // 添加控制收藏的字段
+//     booksList.forEach((book: IBookItem) => {
+//         if (collectionList.value.includes(book.id)) {
+//             ;(book as any)['isCollect'] = true
+//         } else {
+//             ;(book as any)['isCollect'] = false
+//         }
+//     })
+//     const afterSort = booksList
+//         .sort((a: IBookItem, b: IBookItem) => {
+//             return b.bookSales - a.bookSales
+//         })
+//         .slice(0, 3)
+//     hotList.length = 0
+//     hotList.push(...afterSort)
+// }
+// getAllProduct()
 </script>
 
 <style scoped lang="less">
@@ -251,67 +288,5 @@ getAllProduct()
             }
         }
     }
-}
-
-.carousel-img {
-    width: 100%;
-    height: 450px;
-    object-fit: cover;
-}
-
-.custom-arrow {
-    display: flex;
-    position: absolute;
-    bottom: 25px;
-    right: 10px;
-}
-
-.custom-arrow button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    margin-right: 12px;
-    color: #fff;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-width: 0;
-    border-radius: 8px;
-    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-}
-
-.custom-arrow button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-.custom-arrow button:active {
-    transform: scale(0.95);
-    transform-origin: center;
-}
-
-.custom-dots {
-    display: flex;
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-}
-
-.custom-dots li {
-    display: inline-block;
-    width: 12px;
-    height: 4px;
-    margin: 0 3px;
-    border-radius: 4px;
-    background-color: rgba(255, 255, 255, 0.4);
-    transition: width 0.3s, background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-}
-
-.custom-dots li.is-active {
-    width: 40px;
-    background: #fff;
 }
 </style>

@@ -1,15 +1,22 @@
 <template>
-    <Header v-if="route.path === '/' || route.path === '/register'" />
+<!--    <Header v-if="route.path === '/' || route.path === '/register'" />-->
     <n-dialog-provider>
         <MeunSearch v-if="isShowHeader()"></MeunSearch>
     </n-dialog-provider>
     <n-message-provider>
-        <RouterView />
+        <router-view #default="{ route, Component }">
+            <transition enter-active-class="animate__animated animate__fadeIn">
+                <keep-alive>
+                    <component :is="Component"></component>
+                </keep-alive>
+            </transition>
+        </router-view>
     </n-message-provider>
     <Footer v-show="isShowFooter()" />
 </template>
 
 <script setup lang="ts">
+import 'animate.css'
 import { useRoute, RouterView } from 'vue-router'
 import Header from '@/components/common/Header.vue'
 import Footer from '@/components/common/Footer.vue'

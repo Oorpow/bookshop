@@ -124,48 +124,40 @@
                 </template>
             </div>
 
-            <!-- 其它商品 -->
-            <div class="others">
-                <div class="title">
-                    <h3>猜你喜欢</h3>
-                </div>
-                <div class="booksListContent">
-                    <n-card
-                        :title="product.bookName"
-                        v-for="product in otherProducts"
-                        :key="product.id"
-                        hoverable
-                    >
-                        <template #cover>
-                            <img :src="product.bookImg" />
-                        </template>
-                        $ {{ product.bookPrice }}
-                    </n-card>
-                </div>
-            </div>
+            <!-- other -->
+            <Suspense>
+                <OtherProduct :otherProducts="otherProducts" />
+                <template #fallback>
+                    <Loading :need-num="4" />
+                </template>
+            </Suspense>
         </div>
+
+        <!-- 支付模态框 -->
+        <Teleport to="body">
+            <n-modal
+                v-model:show="payModalVisible"
+                :mask-closable="false"
+                preset="dialog"
+                title="支付"
+                positive-text="支付"
+                negative-text="取消"
+                @positive-click="confirmPay"
+                @negative-click="cancelPay"
+            >
+                <n-card :bordered="false">
+                    <div class="orderInfo">
+                        <span>订单编号：{{ orderSerial }}</span>
+                    </div>
+                    <span>总金额: {{ total.toFixed(2) }}</span>
+                </n-card>
+            </n-modal>
+        </Teleport>
     </div>
-    <!-- 支付模态框 -->
-    <n-modal
-        v-model:show="payModalVisible"
-        :mask-closable="false"
-        preset="dialog"
-        title="支付"
-        positive-text="支付"
-        negative-text="取消"
-        @positive-click="confirmPay"
-        @negative-click="cancelPay"
-    >
-        <n-card :bordered="false">
-            <div class="orderInfo">
-                <span>订单编号：{{ orderSerial }}</span>
-            </div>
-            <span>总金额: {{ total.toFixed(2) }}</span>
-        </n-card>
-    </n-modal>
 </template>
 
 <script setup lang="ts">
+import Loading from '@/components/content/LoadingComp/index.vue'
 import { useRouter } from 'vue-router'
 import { type FormInst, useMessage, type FormRules } from 'naive-ui'
 import type { NumberAnimationInst } from 'naive-ui'
@@ -182,27 +174,27 @@ import { useLoginStore } from '@/stores/login'
 const message = useMessage()
 const router = useRouter()
 const store = useLoginStore()
+const OtherProduct = defineAsyncComponent(
+    () => import('@/components/content/Cart/OtherProducts.vue')
+)
 
 let cartList = reactive<BookType[]>([])
 let otherProducts = reactive<IBookItem[]>([])
 
-// 获取购物车列表
-const getCartList = async () => {
-    const res = await getUserCart()
-    const code = checkCode((res as any).code)
-    cartList.length = 0
-    if (code === 200 && res.data != null) {
-        cartList.push(...res.data)
-    }
+// 获取购物车列表和其它商品信息
+const getCartList = () => {
+    const res = Promise.all([getUserCart(), bookGetList()])
+    res.then((data) => {
+        cartList.length = 0
+        cartList.push(...data[0].data)
+        otherProducts.length = 0
+        otherProducts.push(...data[1].data.slice(0, 4))
+    }).catch((err) => {
+        console.warn(err)
+    })
 }
 getCartList()
-// 获取其它商品信息
-const getOtherProduct = async () => {
-    const res = await bookGetList()
-    otherProducts.length = 0
-    otherProducts.push(...res.data.slice(0, 4))
-}
-getOtherProduct()
+
 
 // 收货信息表单
 const cargoForm = reactive<ICargo>({
@@ -500,39 +492,6 @@ const confirmPay = async () => {
                             color: #fff;
                         }
                     }
-                }
-            }
-        }
-
-        .others {
-            margin: 50px 0;
-
-            .title {
-                display: flex;
-
-                h3 {
-                    font-size: 28px;
-                    padding-bottom: 5px;
-                    border-bottom: 3px solid #4338ca;
-                }
-            }
-
-            .booksListContent {
-                display: flex;
-                justify-content: space-between;
-                flex-wrap: wrap;
-                margin-top: 10px;
-                .n-card {
-                    max-width: 300px;
-                    :deep(.n-card-cover) {
-                        display: flex;
-                        justify-content: center;
-                        padding: 25px 0;
-                    }
-                }
-                img {
-                    width: 150px;
-                    height: 150px;
                 }
             }
         }

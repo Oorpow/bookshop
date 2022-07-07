@@ -18,7 +18,12 @@
                     />
                 </div>
                 <div class="booksListContent">
-                    <book-item :booksList="booksList"></book-item>
+                    <Suspense>
+                        <BookItem :booksList="booksList"></BookItem>
+                        <template #fallback>
+                            <Loading :need-num="6"/>
+                        </template>
+                    </Suspense>
                 </div>
             </div>
         </div>
@@ -26,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import BookItem from '@/components/content/BookItem/index.vue'
+import Loading from '@/components/content/LoadingComp/index.vue'
 import _ from 'lodash'
 import type { GlobalThemeOverrides } from 'naive-ui'
 import type { IBookItem } from '@/types'
@@ -39,6 +44,8 @@ const themeOverrides: GlobalThemeOverrides = {
         borderHover: '1px solid #4338ca'
     }
 }
+
+const BookItem = defineAsyncComponent(() => import('@/components/content/BookItem/index.vue'))
 
 // 书籍列表
 const booksList = reactive<IBookItem[]>([])

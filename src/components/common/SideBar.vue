@@ -49,6 +49,7 @@ const permissionObj: any = {
 }
 // 将权限列表转为中文
 const parsePermissionToCn = (permission: string) => permissionObj[permission]
+
 // 将权限列表转为vue-router可识别的对象数组
 const parsePermission = (list: string[]): MenuOption[] => {
     let newPermissionList = reactive<any[]>([])

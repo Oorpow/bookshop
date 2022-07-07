@@ -1,21 +1,15 @@
-import {
-    createRouter,
-    createWebHashHistory,
-    createWebHistory,
-    type NavigationGuardNext,
-    type RouteLocationNormalized
-} from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
+import type { NavigationGuardNext, RouteLocationNormalized } from 'vue-router'
 import Layout from '@/components/common/Layout.vue'
 import { useAdminLoginStore } from '@/stores/admin'
 
 const router = createRouter({
     history: createWebHashHistory(import.meta.env.BASE_URL),
-    // history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
             path: '/',
             name: 'login',
-            component: () => import('@/views/Login.vue'),
+            component: () => import('@/views/Login.vue')
         },
         {
             path: '/index',
@@ -29,7 +23,10 @@ const router = createRouter({
         {
             path: '/home',
             name: 'home',
-            component: () => import('@/views/Home.vue')
+            component: () => import('@/views/Home.vue'),
+            meta: {
+                distance: 1
+            }
         },
         {
             path: '/products',
@@ -48,6 +45,11 @@ const router = createRouter({
             path: '/user',
             name: 'user',
             component: () => import('@/views/UserCenter.vue')
+        },
+        {
+            path: '/contact',
+            name: 'contact',
+            component: () => import('@/views/Contact.vue')
         },
         {
             path: '/adminLogin',
@@ -111,7 +113,7 @@ const router = createRouter({
             component: () => import('@/views/NotFound.vue')
         }
     ],
-    scrollBehavior (to, from, savedPosition) {
+    scrollBehavior(to, from, savedPosition) {
         return { top: 0 }
     }
 })

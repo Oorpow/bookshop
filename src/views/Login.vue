@@ -1,50 +1,74 @@
 <template>
-    <n-config-provider :theme-overrides="themeOverrides">
-        <div class="content">
-            <n-form
-                ref="loginFormRef" :label-width="600" :model="loginForm" :rules="rules" class="loginForm" size="large"
-            >
-                <n-form-item label="用户名" path="uname">
-                    <n-input v-model:value="loginForm.uname" placeholder="username" clearable />
-                </n-form-item>
-                <n-form-item label="密码" path="passwd">
-                    <n-input
-                        v-model:value="loginForm.passwd"
-                        placeholder="password"
-                        type="password"
-                    />
-                </n-form-item>
-                <n-form-item>
-                    <n-button
-                        attr-type="button"
-                        @click="handleValidateClick"
-                        text-color="#fff"
-                        color="#4f46e5"
-                        bordered
-                        strong
-                        >登录</n-button
-                    >
-                </n-form-item>
-            </n-form>
+    <n-config-provider :theme-overrides='themeOverrides'>
+        <div class='content'>
+            <div class='content-form'>
+                <div class='content-form-title'>
+                    <n-h1>Sign in to your account</n-h1>
+                    <n-h3>Don’t have an account?
+                        <router-link to='/register' style='color: #4338ca; font-weight: bold;'>Sign up</router-link>
+                        for a free trial
+                    </n-h3>
+                </div>
+                <n-form
+                    ref='loginFormRef' :label-width='600' :model='loginForm' :rules='rules' class='loginForm'
+                    size='large'
+                >
+                    <n-form-item label='Username' path='uname'>
+                        <n-input v-model:value='loginForm.uname' placeholder='' size='large' clearable />
+                    </n-form-item>
+                    <n-form-item label='Password' path='passwd'>
+                        <n-input
+                            v-model:value='loginForm.passwd'
+                            type='password'
+                            placeholder=''
+                            size='large'
+                        />
+                    </n-form-item>
+                    <n-form-item>
+                        <n-button
+                            attr-type='button'
+                            @click='handleValidateClick'
+                            text-color='#fff'
+                            color='#4f46e5'
+                            bordered
+                            strong
+                            round
+                            size='large'
+                        >Sign in
+                            <n-icon :component='ArrowForward'/>
+                        </n-button
+                        >
+                    </n-form-item>
+                </n-form>
+            </div>
+            <LinearGradient />
         </div>
     </n-config-provider>
 </template>
 
-<script setup lang="ts">
+<script setup lang='ts'>
+import LinearGradient from '@/components/common/LinearGradient.vue'
 import type { FormInst, GlobalThemeOverrides } from 'naive-ui'
 import { useMessage } from 'naive-ui'
 import { useLoginStore } from '@/stores/login'
 import { useRouter } from 'vue-router'
 import type { ILoginForm } from '@/types'
+import { ArrowForward } from '@vicons/ionicons5'
 
 const themeOverrides: GlobalThemeOverrides = {
     Input: {
         border: '1px solid #ccc',
         borderHover: '1px solid #4f46e5',
-        borderFocus: '1px solid #4f46e5'
+        borderFocus: '1px solid #4f46e5',
+        borderRadius: '6px',
+        color: '#f9fafb',
+        heightLarge: '45px'
     },
     Radio: {
         dotColorActive: '#4f46e5'
+    },
+    Button: {
+        heightLarge: '50px'
     }
 }
 
@@ -60,8 +84,8 @@ let loginForm = reactive<ILoginForm>({
 })
 // 校验规则
 const rules = {
-    uname: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-    passwd: [{ required: true, message: '请输入密码', trigger: 'blur' }]
+    uname: [{ required: true, message: 'Please input username', trigger: 'blur' }],
+    passwd: [{ required: true, message: 'Please input password', trigger: 'blur' }]
 }
 
 // 点击登录
@@ -71,47 +95,74 @@ const handleValidateClick = (e: MouseEvent) => {
             const flag = await store.login(loginForm)
             if (flag) {
                 router.push({ name: 'home' })
-                message.success('登录成功')
+                message.success('Login successfully')
             } else {
-                message.warning('登录失败，请检查你的用户名或密码是否正确')
+                message.warning('Login failed，Please check your username or password')
             }
         } else {
-            message.warning('校验失败')
+            message.warning('check failed')
         }
     })
 }
 </script>
 
-<style scoped lang="less">
+<style scoped lang='less'>
 .n-config-provider {
-    height: 100%;
     .content {
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        height: 95%;
-        .loginForm {
+        height: 100vh;
+        overflow: hidden;
+
+        &-form {
+            width: 800px;
             display: flex;
             flex-direction: column;
-            width: 440px;
-            padding: 30px 40px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            position: relative;
-            top: 50%;
-            transform: translateY(-50%);
-            .n-form-item {
-                .n-input {
-                    &:focus {
-                        border: 1px solid #000;
+            justify-content: center;
+            align-items: center;
+
+            &-title {
+                width: 500px;
+            }
+
+            .loginForm {
+                display: flex;
+                flex-direction: column;
+                width: 500px;
+                padding: 20px 40px 10px 40px;
+
+                .n-form-item {
+                    :deep(.n-form-item-label) {
+                        font-size: 18px;
+                    }
+
+                    .n-input {
+                        &:focus {
+                            border: 1px solid #000;
+                        }
+                    }
+
+                    .n-button {
+                        width: 100%;
+                        font-size: 20px;
                     }
                 }
-                .n-button {
-                    width: 100%;
-                    font-size: 20px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .n-config-provider {
+        .content {
+            &-form {
+                &-title {
+                    width: 80%;
+                }
+                .loginForm {
+                    width: 80%;
                 }
             }
+
         }
     }
 }

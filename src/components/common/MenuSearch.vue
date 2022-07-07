@@ -6,7 +6,12 @@
             </div>
             <ul>
                 <li v-for="(rt, index) in routeList" :key="index">
-                    <router-link :to="rt.path">{{ rt.title }}</router-link>
+                    <router-link
+                        :to="rt.path"
+                        :class="rt.path === currentRoutePath ? 'active' : ''"
+                        >{{ rt.title }}</router-link
+                    >
+                    <div :class="currentRoutePath === rt.path ? 'slideBlock' : ''"></div>
                 </li>
             </ul>
             <!-- 已登录 -->
@@ -34,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import type { GlobalThemeOverrides } from 'naive-ui'
 import { useLoginStore } from '@/stores/login'
 import { userLogout } from '@/api/user'
@@ -49,6 +54,7 @@ const themeOverrides: GlobalThemeOverrides = {
 }
 
 const router = useRouter()
+const route = useRoute()
 const store = useLoginStore()
 
 // 下拉菜单配置项
@@ -62,6 +68,7 @@ const normalOptions = [
 // 获取用户头像
 const getAvatar = () => {
     if (store.getUserInfo.portrait === '') {
+        // 默认头像
         return 'https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg'
     }
     return store.getUserInfo.portrait
@@ -74,6 +81,19 @@ const routeList = reactive([
     { path: '/cart', title: '购物车' },
     { path: '/contact', title: '联系我们' }
 ])
+
+const currentRoutePath = ref<string>('')
+
+// 监听路由变化
+watch(
+    () => {
+        return router.currentRoute.value
+    },
+    (newVal, oldVal) => {
+        currentRoutePath.value = newVal.path
+    },
+    { immediate: true }
+)
 
 // 注销
 const handleSelect = async (key: string) => {
@@ -115,6 +135,7 @@ const toUserCenter = () => {
             text-align: left;
             align-items: center;
             margin: 0 30px;
+            position: relative;
             a {
                 color: #6b7280;
                 font-size: 23px;
@@ -123,8 +144,20 @@ const toUserCenter = () => {
                     color: #4338ca;
                 }
             }
-            .acitve {
-                border-bottom: 3px solid #4338ca;
+            // 下滑块
+            .slideBlock {
+                width: 25px;
+                height: 5px;
+                border-radius: 5px;
+                position: absolute;
+                left: 50%;
+                bottom: -15px;
+                transition: all 1s;
+                background-color: #4338ca;
+                transform: translateX(-50%);
+            }
+            .active {
+                font-weight: bold;
             }
         }
     }

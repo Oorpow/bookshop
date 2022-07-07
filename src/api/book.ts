@@ -2,7 +2,7 @@ import request from './request'
 import type { BookFilterType, IAddBook, NewBookFormType } from '@/types'
 
 // 获取全部书籍
-export const bookGetList = () =>
+export const bookGetList = () => 
     request({
         url: '/book/selectAll'
     })
